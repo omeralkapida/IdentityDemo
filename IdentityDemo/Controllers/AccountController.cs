@@ -144,5 +144,32 @@ namespace IdentityDemo.Controllers
         {
             return View();
         }
+
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                ViewBag.Message = "Bu e-posta sistemde kayıtlı değil.";
+                return View();
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, token = token }, protocol: Request.Scheme);
+
+            // TODO: burada e-postaya gönder (şimdilik console'a yazalım)
+            Console.WriteLine("Şifre sıfırlama linki: " + callbackUrl);
+
+            ViewBag.Message = "Şifre sıfırlama linki e-posta adresinize gönderildi.";
+            return View();
+        }
     }
 }
