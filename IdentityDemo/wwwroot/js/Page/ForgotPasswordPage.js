@@ -6,12 +6,13 @@
                 <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 bg-white border rounded-4 p-4 shadow-sm">
                     <h4 class="text-center text-primary mb-4">Şifremi Unuttum</h4>
                     <div id="forgotPasswordResult" class="mt-3"></div>
-                    <form id="registerForm" class="needs-validation" novalidate>
+                    <form id="forgotPasswordForm" class="needs-validation" novalidate>
                         <div class="mb-3">
                             <label for="email" class="form-label">E-posta</label>
                             <input type="email" class="form-control" id="email" placeholder="ornek@mail.com" required />
+                            <div class="invalid-feedback">Lütfen e-posta adresinizi giriniz.</div>
                         </div>
-                        <span class="btn btn-primary w-100" id="forgotPasswordButton"></span>
+                        <span class="btn btn-primary w-100" id="forgotPasswordButton">Şifremi Sıfırla</span>
                         <div id="loading" class="text-center mt-3" style="display:none;">
                             <div class="spinner-border text-primary" role="status"></div>
                         </div>
@@ -29,7 +30,7 @@
     $('#forgotPasswordButton').on('click', function (e) {
         e.preventDefault();
 
-        const form = $('#registerForm')[0];
+        const form = $('#forgotPasswordForm')[0];
         if (!form.checkValidity()) {
             e.preventDefault();
             e.stopPropagation();
@@ -37,26 +38,20 @@
             return;
         }
 
-
-        $('#registerButton').prop('disabled', true).text('Kayıt olunuyor...');
+        $('#forgotPasswordButton').prop('disabled', true).text('E-Posta adresinize şifre sıfırlama için gerekli adımlar gönderiliyor.');
         $('#loading').show();
 
-        const data = {
-            fullName: $('#fullName').val(),
-            email: $('#email').val(),
-            password: $('#password').val(),
-            userName: $("#userName").val()
-        };
+        const email = $('#email').val();
 
         $.ajax({
-            url: '/Account/Register',
+            url: '/Account/ForgotPassword',
             method: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify(data),
+            data: JSON.stringify(email),
             success: function (response) {
-                $('#registerResult').html(`<div class="alert alert-success"><ul><li>Kayıt başarılı!</li></ul></div>`);
-                $('#registerForm')[0].reset();
-                $('#registerForm').addClass("d-none");
+                $('#forgotPasswordResult').html(`<div class="alert alert-success"><ul><li>Şifre sıfırlama linki e-posta adresinize gönderildi.</li></ul></div>`);
+                $('#forgotPasswordForm')[0].reset();
+                $('#forgotPasswordForm').addClass("d-none");
             },
             error: function (xhr) {
                 let response = xhr.responseJSON;
@@ -72,10 +67,10 @@
                     errorHtml = `<div>${xhr.responseText}</div>`;
                 }
 
-                $('#registerResult').html(`<div class="alert alert-danger">${errorHtml}</div>`);
+                $('#forgotPasswordResult').html(`<div class="alert alert-danger">${errorHtml}</div>`);
             },
             complete: function () {
-                $('#registerButton').prop('disabled', false).text('Kayıt Ol');
+                $('#forgotPasswordButton').prop('disabled', false).text('Şifremi Sıfırla');
                 $('#loading').hide();
             }
         });

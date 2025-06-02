@@ -22,12 +22,16 @@
 
                     <button type="submit" class="btn btn-success w-100" id="loginButton">Giriş Yap</button>
 
+                    <div class="text-center mt-2 small">
+                        <a href="/Account/ForgotPassword" class="text-muted d-block mb-1">Şifremi Unuttum!</a>
+                    </div>
+
                     <div id="loading" class="text-center mt-3" style="display: none;">
                         <div class="spinner-border text-success" role="status"></div>
                     </div>
                 </form>
 
-                <div class="text-center mt-4 small">
+                <div class="text-center mt-2 small">
                     <span class="text-muted d-block mb-1">Hesabınız yok mu?</span>
                     <a href="/Account/Register" class="text-decoration-none text-primary fw-bold">Üyelik Sayfasına Git</a>
                 </div>

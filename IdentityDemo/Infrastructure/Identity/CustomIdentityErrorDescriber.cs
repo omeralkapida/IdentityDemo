@@ -74,5 +74,14 @@ namespace IdentityDemo.Infrastructure.Identity
                 Description = $"'{userName}' geçersiz bir kullanıcı adıdır. Sadece küçük harf, rakam ve '.' ya da '_' içerebilir. Türkçe karakter olmamalıdır."
             };
         }
+
+        public override IdentityError InvalidToken()
+        {
+            return new IdentityError
+            {
+                Code = nameof(InvalidToken),
+                Description = "Geçersiz ya da süresi dolmuş şifre sıfırlama bağlantısı. Lütfen yeniden talep edin."
+            };
+        }
     }
 }

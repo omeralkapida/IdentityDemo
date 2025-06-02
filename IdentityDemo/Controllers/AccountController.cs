@@ -1,7 +1,8 @@
 ﻿using IdentityDemo.Dtos;
 using IdentityDemo.Models;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using IdentityDemoSysteam.Dtos;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -153,7 +154,7 @@ namespace IdentityDemo.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ForgotPassword(string email)
+        public async Task<IActionResult> ForgotPassword([FromBody] string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -170,6 +171,56 @@ namespace IdentityDemo.Controllers
 
             ViewBag.Message = "Şifre sıfırlama linki e-posta adresinize gönderildi.";
             return View();
+        }
+
+
+        [HttpGet]
+        public IActionResult ResetPassword(string userId, string token)
+        {
+            if (userId == null || token == null)
+            {
+                return BadRequest("Geçersiz bağlantı.");
+            }
+
+            var model = new ResetPasswordViewModel
+            {
+                UserId = userId,
+                Token = token
+            };
+
+            return View(); 
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordViewModel model)
+        {
+            var errors = new List<string>();
+
+            if (!ModelState.IsValid)
+            {
+                errors.AddRange(ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+            }
+
+            if (errors.Any())
+                return BadRequest(errors);
+
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            if (user == null)
+            {
+                errors.Add("Kullanıcı bulunamadı.");
+                return BadRequest(errors);
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+
+            if (result.Succeeded)
+                return Json(new { redirectUrl = Url.Action("Login", "Account") });
+
+            errors.AddRange(result.Errors.Select(e => e.Description));
+            return BadRequest(errors);
         }
     }
 }
