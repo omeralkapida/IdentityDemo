@@ -1,6 +1,8 @@
 ﻿using IdentityDemo.Context;
 using IdentityDemo.Infrastructure.Identity;
 using IdentityDemo.Models;
+using IdentityDemoSysteam.Dtos;
+using IdentityDemoSysteam.Infrastructure.GoogleEmail;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +47,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.MaxAge = TimeSpan.FromMinutes(60); // Alternatif tanım
 });
 
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings")); 
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddControllersWithViews();
 
@@ -63,6 +67,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

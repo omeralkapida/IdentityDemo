@@ -1,6 +1,7 @@
 ﻿using IdentityDemo.Dtos;
 using IdentityDemo.Models;
 using IdentityDemoSysteam.Dtos;
+using IdentityDemoSysteam.Infrastructure.GoogleEmail;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -14,10 +15,12 @@ namespace IdentityDemo.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        private readonly IEmailService _emailService;
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -164,10 +167,9 @@ namespace IdentityDemo.Controllers
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, token = token }, protocol: Request.Scheme);
 
-            // TODO: burada e-postaya gönder (şimdilik console'a yazalım)
             Console.WriteLine("Şifre sıfırlama linki: " + callbackUrl);
+            await _emailService.SendPasswordResetEmailAsync(user.Email!, callbackUrl!);
 
-            ViewBag.Message = "Şifre sıfırlama linki e-posta adresinize gönderildi.";
             return View();
         }
 
