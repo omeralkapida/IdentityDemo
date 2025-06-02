@@ -77,7 +77,6 @@ namespace IdentityDemo.Controllers
             return BadRequest(identityErrors);
         }
 
-
         [HttpGet]
         public IActionResult Login()
         {
@@ -146,7 +145,6 @@ namespace IdentityDemo.Controllers
             return View();
         }
 
-
         [HttpGet]
         public IActionResult ForgotPassword()
         {
@@ -173,7 +171,6 @@ namespace IdentityDemo.Controllers
             return View();
         }
 
-
         [HttpGet]
         public IActionResult ResetPassword(string userId, string token)
         {
@@ -190,7 +187,6 @@ namespace IdentityDemo.Controllers
 
             return View(); 
         }
-
 
         [HttpPost]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordViewModel model)
