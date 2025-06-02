@@ -28,6 +28,11 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 .AddErrorDescriber<CustomIdentityErrorDescriber>() //Türkçeleştirme burada
 .AddDefaultTokenProviders();
 
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    options.TokenLifespan = TimeSpan.FromMinutes(30); // Burada süreyi değiştirebilirsin
+});
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
